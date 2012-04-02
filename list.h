@@ -157,7 +157,19 @@ void* data(list_iterator* iter);
 * @param index The index to find.
 * @return A void* to the data inside of the element at index.
 */
-void* find(list_iterator* iter, int index);
+void* iget(list_iterator* iter, int index);
+
+node* irm(list_iterator* iter, int index);
+node* ipop(list_iterator* iter);
+
+/**
+* Similar to the append method, but it is done through
+* an iterator instead. It is always more useful to use
+* (this) linked list through an iterator, so you should
+* use the methods that take iterators instead of lists
+* (like this one).
+*/
+void iappend(list_iterator* iter, void* data);
 
 /**
 * Used for finding alphabetical order. The parameters
@@ -169,7 +181,19 @@ void* find(list_iterator* iter, int index);
 * 1 if str2 comes before str3 in alphabetical order.
 * 2 if they are equal.
 */
-int str_order(void* str1, void* str2);
+int cmp_str(void* str1, void* str2);
+
+/**
+* Compare ints to each other to see which one is smaller.
+* This method may be passed in as the comparator function
+* to a sort.
+* @param int1 The first int to compare.
+* @param int2 The second int to compare.
+* @return 0 if int1 comes before int2 in alphabetical order.
+* 1 if int2 comes before int3 in alphabetical order.
+* 2 if they are equal.
+*/
+int cmp_int(void* int1, void* int2);
 
 /**
 * Generic function that extracts data from the void* in
@@ -184,7 +208,16 @@ int str_order(void* str1, void* str2);
 * nodes. Currently, the char* key of the pair struct is returned
 * as I designed this to sort by key values in pairs.
 */
-void* str_order_data(void* data);
+void* extract_pair(void* data);
+
+/**
+* Generic function that extracts data from a node as an int.
+* Can be passed in as the data function to a sort.
+* @param data The data of a list node.
+* @return A void* of the data extracted the way as it should
+* be compared in a comparator function.
+*/
+void* extract_int(void* data);
 
 /**
 * Sort a list using one of its iterators.

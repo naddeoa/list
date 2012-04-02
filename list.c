@@ -160,7 +160,6 @@ void* rm(list* lst, int index){
 			n = n->next;
 		}
 
-		
 		node* rm = n->next; // node to be removed
 		n->next = rm->next;
 		rm->next->prev = n;
@@ -205,12 +204,12 @@ void append(list* lst, void* data) {
 
 void printList(list* lst){
 	node* n = lst->head;
-	pair* p;
+	int* p;
 	printf("[ ");
 	int i;
 	for(i=0; i<lst->length; i++){
-		p = (pair*)n->data;
-		printf("%s:%s, ", p->key, p->val);
+		p = (int*)n->data;
+		printf("%i, ", *p);
 		n = n->next;
 	}
 	printf("]\n\n");
@@ -267,7 +266,7 @@ void* data(list_iterator* iter){
 	return iter->current->data;
 }
 
-void* find(list_iterator* iter, int index){
+void* iget(list_iterator* iter, int index){
 	//ensure the index is in bounds
 	if(index >= iter->lst->length || index < 0){
 		printf("index out of bounds\n");
@@ -312,7 +311,20 @@ void* find(list_iterator* iter, int index){
 	return data(iter);
 }
 
-int str_order(void* vstr1, void* vstr2){
+node* irm(list_iterator* iter, int index){
+	
+	rm(iter->lst, index);
+
+}
+
+void iappend(list_iterator* iter, void* data){
+	append(iter->lst, data);
+
+	if(iter->lst->length == 1)
+		iter->current = iter->lst->head;
+}
+
+int cmp_str(void* vstr1, void* vstr2){
 	//cast the void* to char*. This function only
 	//compares strings
 	char* str1 = (char*)vstr1;
@@ -336,28 +348,47 @@ int str_order(void* vstr1, void* vstr2){
 		return 2;
 }
 
+int cmp_int(void* vint1, void* vint2){
+	int* int1 = (int*)vint1;
+	int* int2 = (int*)vint2;
 
-void* str_order_data(void* data){
+	if(*int1 < *int2)
+		return 0;
+	else if(*int1 > *int2)
+		return 1;
+	else
+		return 2;
+}
+
+
+void* extract_pair(void* data){
 	pair* p = (pair*)data;
 	return p->key;
 }
 
+void* extract_int(void* data){
+	int* i = (int*)data;
+	return i;
+}
+
 void bubble_sort(list_iterator* iter, int(*cmp_func)(void*,void*),
                 void*(*data_func)(void*)){
-	int i,j;
+	int i,j, index = iter->index;
 	void* p1;
 	void* p2;
 	for(i = 0; i < iter->lst->length-1; i++){
 		for(j = 0; j < iter->lst->length-1; j++){
-			find(iter, j);	
-			p1 = str_order_data(iter->current->data);
-			p2 = str_order_data(iter->current->next->data);
+			iget(iter, j);
+			printf("index: %i\n",iter->index);	
+			p1 = data_func(iter->current->data);
+			p2 = data_func(iter->current->next->data);
 			if( cmp_func( p1, p2)){
 				_swap(iter->lst, iter->current, iter->current->next);
 				iter->index++;
 			}
 		}
 	}
+	iget(iter,index);//restore the iterator to its original index
 
 }
 
